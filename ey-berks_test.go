@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"io"
+	"log"
 	"os"
 	"strings"
 	"testing"
@@ -28,7 +29,11 @@ func commandOutput(args []string) (output string) {
 }
 
 func getLine(text string, line int) string {
-	return strings.Split(text, "\n")[line]
+	lines := strings.Split(text, "\n")
+	if len(lines) < line+1 {
+		log.Fatalf("There is no line at line %d in %s", line, text)
+	}
+	return lines[line]
 }
 
 func TestNoArgs(t *testing.T) {
