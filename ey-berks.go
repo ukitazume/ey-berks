@@ -41,7 +41,7 @@ help     show this usage
 		}
 		return 0
 	default:
-		fmt.Print("no command")
+		fmt.Println("The command doesn't exist.Please check ey-berks help.")
 		return 0
 	}
 	return 0
