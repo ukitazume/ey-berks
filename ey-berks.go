@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/ukitazume/ey-berks/commands"
+	"github.com/ukitazume/ey-berks/config"
 	"os"
 )
 
