@@ -13,5 +13,6 @@ before_install:
   - cmake .. -DCMAKE_INSTALL_PREFIX=/usr
   - cmake --build .
   - sudo make install
+  - cd $HOME/gopath/src/github.com/ukitazume/ey-berks
 script: 
   - go test ./...
