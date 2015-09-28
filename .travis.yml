@@ -7,6 +7,6 @@ go:
 
 before_install:
   - sudo apt-get update -q
-  - sudo apt-get install -y libgit2
+  - sudo apt-get install -y libgit2-22
 script: 
   - go test ./...
