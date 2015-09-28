@@ -31,7 +31,7 @@ func TestCreate(t *testing.T) {
 
 func TestParse(t *testing.T) {
 	Create("/tmp")
-	berks := Parse("/tmp/EYBerksfile")
+	berks := Parse("/tmp")
 	if berks.Main.Library != "engineyard/ey-cloud-recipes/main/libraries" {
 		t.Errorf("not match")
 	}

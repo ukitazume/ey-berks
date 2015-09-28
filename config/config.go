@@ -1,11 +1,16 @@
 package config
 
 import (
-	"bytes"
-	"github.com/BurntSushi/toml"
 	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
+
+	"github.com/BurntSushi/toml"
+)
+
+const (
+	ConfigFileName = "EYBerksfile"
 )
 
 type Berks struct {
@@ -27,11 +32,9 @@ type Cookbook struct {
 }
 
 func Create(path string) error {
-	var fullPath bytes.Buffer
-	fullPath.WriteString(path)
-	fullPath.WriteString("/EYBerksfile")
+	fullPath := filepath.Join(path, ConfigFileName)
 
-	f, err := os.Create(fullPath.String())
+	f, err := os.Create(fullPath)
 	if err != nil {
 		return err
 	}
@@ -50,12 +53,14 @@ path = "cookbooks/env_vars"
 }
 
 func Parse(path string) Berks {
-	dat, err := ioutil.ReadFile(path)
+	fullPath := filepath.Join(path, ConfigFileName)
+	dat, err := ioutil.ReadFile(fullPath)
 	if err != nil {
 		log.Fatal(err)
 	}
 	var berks Berks
 	if _, err := toml.Decode(string(dat), &berks); err != nil {
+		log.Fatal(err)
 	}
 	return berks
 }
