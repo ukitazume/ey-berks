@@ -35,7 +35,10 @@ func TestParse(t *testing.T) {
 	if berks.Main.Library != "engineyard/ey-cloud-recipes/main/libraries" {
 		t.Errorf("not match")
 	}
-	if berks.Cookbook[0].Path != "engineyard/ey-cloud-recipes/cookbooks/env_vars" {
+	if berks.Cookbook[0].Repo != "engineyard/ey-cloud-recipes" {
+		t.Errorf("not match")
+	}
+	if berks.Cookbook[0].Path != "cookbooks/env_vars" {
 		t.Errorf("not match")
 	}
 

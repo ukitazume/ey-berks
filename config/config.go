@@ -22,6 +22,7 @@ type Main struct {
 type Cookbook struct {
 	Path string
 	Host string
+	Repo string
 	NAME string
 }
 
@@ -39,7 +40,8 @@ library = "engineyard/ey-cloud-recipes/main/libraries"
 definition = "engineyard/ey-cloud-recipes/main/definitions"
 
 [[cookbook]]
-path = "engineyard/ey-cloud-recipes/cookbooks/env_vars"
+repo = "engineyard/ey-cloud-recipes"
+path = "cookbooks/env_vars"
 `
 	f.Write([]byte(defaultFormat))
 	f.Close()
