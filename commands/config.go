@@ -8,18 +8,18 @@ import (
 	"os"
 )
 
-type berks struct {
-	Main     main
-	Cookbook []cookbook
+type Berks struct {
+	Main     Main
+	Cookbook []Cookbook
 }
 
-type main struct {
+type Main struct {
 	Library    string
 	Definition string
 	Host       string
 }
 
-type cookbook struct {
+type Cookbook struct {
 	Path string
 	Host string
 	NAME string
@@ -47,12 +47,12 @@ path = "engineyard/ey-cloud-recipes/cookbooks/env_vars"
 	return nil
 }
 
-func Parse(path string) berks {
+func Parse(path string) Berks {
 	dat, err := ioutil.ReadFile(path)
 	if err != nil {
 		log.Fatal(err)
 	}
-	var berks berks
+	var berks Berks
 	if _, err := toml.Decode(string(dat), &berks); err != nil {
 	}
 	return berks
