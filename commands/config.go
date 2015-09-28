@@ -14,8 +14,7 @@ func Create(path string) error {
 	if err != nil {
 		return err
 	}
-	defaultFormat := `
-[main]
+	defaultFormat := `[main]
 libraries = "engineyard/ey-cloud-recipes/main/libraries"
 definitions = "engineyard/ey-cloud-recipes/main/definitions"
 
