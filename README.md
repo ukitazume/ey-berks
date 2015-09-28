@@ -1,5 +1,7 @@
 # ey_berkshelf
 
+[![Build Status](https://travis-ci.org/ukitazume/ey-berks.svg)](https://travis-ci.org/ukitazume/ey-berks)
+
 ### Getting Start
 
 ```
