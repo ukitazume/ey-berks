@@ -5,5 +5,8 @@ go:
   - 1.4
   - tip
 
+before_intall:
+  - sudo apt-get update -q
+  - sudo apt-get install libgit2
 script: 
   - go test ./...
