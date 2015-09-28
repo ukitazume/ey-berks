@@ -2,15 +2,13 @@ package config
 
 import (
 	"bytes"
-	//"fmt"
-	//#"github.com/BurntSushi/toml"
 	"os"
 )
 
 func Create(path string) error {
 	var fullPath bytes.Buffer
 	fullPath.WriteString(path)
-	fullPath.WriteString("EYBerksfile")
+	fullPath.WriteString("/EYBerksfile")
 
 	f, err := os.Create(fullPath.String())
 	if err != nil {

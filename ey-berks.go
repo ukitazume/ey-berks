@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/ukitazume/ey-berks/commands"
 	"os"
 )
 
@@ -27,14 +28,20 @@ help     show this usage
 		return 0
 	}
 
-	fmt.Printf("%s", argv[0])
-
 	switch argv[0] {
 	case "help":
 		fmt.Print(usage)
 		return 0
+	case "init":
+		fmt.Println("create EYBerksfile")
+		err := config.Create(argv[1])
+		if err != nil {
+			fmt.Print(err)
+			return 1
+		}
+		return 0
 	default:
-		fmt.Print(usage)
+		fmt.Print("no command")
 		return 0
 	}
 	return 0
