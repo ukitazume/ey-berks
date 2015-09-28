@@ -7,6 +7,13 @@ import (
 	"testing"
 )
 
+func removeTmpFile(t *testing.T) {
+	err := os.Remove("/tmp/EYBerksfile")
+	if err != nil {
+		t.Errorf("failed to remove /tmp/EYBerksfile")
+	}
+}
+
 func TestCreate(t *testing.T) {
 	Create("/tmp")
 	dat, err := ioutil.ReadFile("/tmp/EYBerksfile")
@@ -18,5 +25,19 @@ func TestCreate(t *testing.T) {
 	if !r.MatchString(actual) {
 		t.Errorf("not include %v in %v", r, actual)
 	}
-	os.Remove("/tmp/EYBerksfile")
+	removeTmpFile(t)
+
+}
+
+func TestParse(t *testing.T) {
+	Create("/tmp")
+	berks := Parse("/tmp/EYBerksfile")
+	if berks.Main.Library != "engineyard/ey-cloud-recipes/main/libraries" {
+		t.Errorf("not match")
+	}
+	if berks.Cookbook[0].Path != "engineyard/ey-cloud-recipes/cookbooks/env_vars" {
+		t.Errorf("not match")
+	}
+
+	removeTmpFile(t)
 }
