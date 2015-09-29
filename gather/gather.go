@@ -18,35 +18,39 @@ func NewGather(berksFilePath string) Gather {
 	return Gather{Berks: bersk}
 }
 
-func (g *Gather) Gather() error {
-	prepareCookBookDir("./")
+func (g *Gather) Gather(path string) error {
+	prepareDir(g.Berks.Library, path)
+	updateCookbook(g.Berks.Library)
+	copyRecipes(g.Berks.Library, path)
 
-	for _, c := range g.Berks.Cookbook {
-		prepareDir(c)
-		if err := updateCookbook(c); err != nil {
-			fmt.Println(err)
-		}
-		copyRecipes("./cookbooks", c)
+	prepareDir(g.Berks.Definition, path)
+	updateCookbook(g.Berks.Definition)
+	for _, cookbook := range g.Berks.Cookbooks {
+		prepareDir(cookbook, path)
 	}
+
 	return nil
 }
 
-func prepareDir(cookbook config.Cookbook) error {
-	err := os.MkdirAll(cookbook.WorkingRepoPath(), 0744)
+func prepareDir(c config.CodeResourceOperator, path string) error {
+	fullPath := filepath.Join(path, c.DesticationPath())
+	fmt.Printf("create %v\n", fullPath)
+
+	err := os.MkdirAll(fullPath, 0744)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func updateCookbook(cookbook config.Cookbook) error {
-	path := cookbook.WorkingRepoPath()
+func updateCookbook(c config.CodeResourceOperator) error {
+	path := c.CacheRepoPath()
 	if _, err := os.Stat(path + "/.git"); os.IsNotExist(err) {
 		gitCloneOption := new(git.CloneOptions)
-		if _, err := git.Clone(cookbook.RemoteUrl(), path, gitCloneOption); err != nil {
+		if _, err := git.Clone(c.RemotoRepoUrl(), path, gitCloneOption); err != nil {
 			return err
 		}
-		fmt.Printf("clone to locat from %s\n", cookbook.RemoteUrl())
+		fmt.Printf("clone to locat from %s\n", c.RemotoRepoUrl())
 	} else {
 		repo, err := git.OpenRepository(path)
 		if err != nil {
@@ -79,19 +83,13 @@ func updateCookbook(cookbook config.Cookbook) error {
 	return nil
 }
 
-func prepareCookBookDir(path string) error {
-	fullPath := filepath.Join(path, "cookbooks")
-	if _, err := os.Stat(fullPath); os.IsNotExist(err) {
-		if err := os.MkdirAll(fullPath, 0744); err != nil {
-			return err
-		}
+func copyRecipes(c config.CodeResourceOperator, path string) error {
+	destDir := filepath.Join(path, c.DesticationPath())
+	srcDir := filepath.Join(c.CacheRepoPath(), c.SourcePath())
+	fmt.Printf(" -- copy %s to %s\n", srcDir, destDir)
+	cmd := exec.Command("cp", "-rf", srcDir+"/", destDir)
+	if err := cmd.Run(); err != nil {
+		return err
 	}
-	return nil
-}
-
-func copyRecipes(path string, c config.Cookbook) error {
-	destDir := filepath.Join(path, "cookbooks", c.Host(), c.Repo, c.Path)
-	srcDir := c.WorkingPath()
-	exec.Command("cp", "-rf", srcDir, destDir)
 	return nil
 }

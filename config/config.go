@@ -12,30 +12,43 @@ import (
 const (
 	ConfigFileName = "EYBerksfile"
 	WorkingDirName = ".ey-berks"
-	CookBookName   = "cookbooks"
 )
 
 type CodeResourceOperator interface {
 	RemoteHost() string
-	RemotoRepoUrl() string /* git://github.com/egnineyard/ey-cloud-recipes */
-	CacheRepoPath() string /* /home/deploy/.ey-berks/github.com/engineyard/ey-cloud-recipes */
-	DistPath() string      /* cookbooks/env_vars */
-	Repo() string
+	RemotoRepoUrl() string   /* git://github.com/egnineyard/ey-cloud-recipes */
+	CacheRepoPath() string   /* /home/deploy/.ey-berks/github.com/engineyard/ey-cloud-recipes */
+	DesticationPath() string /* env_vars */
+	SourcePath() string      /* env_vars */
 }
 
-func (c CodeResource) CacheRepoPath() string {
+func (c *CodeResource) DesticationPath() string {
+	if c.DistPath == "" {
+		return c.Path
+	} else {
+		return c.DistPath
+	}
+}
+
+func (c *CodeResource) SourcePath() string {
+	if c.SrcPath == "" {
+		return c.Path
+	} else {
+		return c.SrcPath
+	}
+}
+
+func (c *CodeResource) CacheRepoPath() string {
 	return filepath.Join(os.Getenv("HOME"), WorkingDirName, c.RemoteHost(), c.Repo)
 }
 
-func (c CodeResource) DistPath() string {
-	return filepath.Join(CookBookName, c.Path)
-}
-
 type CodeResource struct {
-	Path string
-	Host string
-	Repo string
-	Name string
+	Path     string
+	SrcPath  string
+	DistPath string
+	Host     string
+	Repo     string
+	Name     string
 	CodeResourceOperator
 }
 
@@ -57,7 +70,7 @@ type Cookbook struct {
 	*CodeResource
 }
 
-func (c CodeResource) RemoteHost() string {
+func (c *CodeResource) RemoteHost() string {
 	if c.Host != "" {
 		return c.Host
 	} else {
@@ -65,7 +78,7 @@ func (c CodeResource) RemoteHost() string {
 	}
 }
 
-func (c CodeResource) RemotoRepoUrl() string {
+func (c *CodeResource) RemotoRepoUrl() string {
 	return "git://" + c.RemoteHost() + "/" + c.Repo
 }
 
@@ -78,11 +91,11 @@ func Create(path string) error {
 	}
 	defaultFormat := `[library]
 repo = "engineyard/ey-cloud-recipes"
-path = "main/libraries"
+path = "cookbooks/main/libraries"
 
 [definition]
 repo = "engineyard/ey-cloud-recipes"
-path = "main/definitions"
+path = "cookbooks/main/definitions"
 
 [[cookbook]]
 name = "env"

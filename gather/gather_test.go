@@ -10,7 +10,7 @@ func TestNewGather(t *testing.T) {
 		t.Errorf("cannot create Berksfile with %d", err)
 	}
 	gather := NewGather("/tmp")
-	err := gather.Gather()
+	err := gather.Gather("./")
 	if err != nil {
 		t.Errorf("%d", err)
 	}
