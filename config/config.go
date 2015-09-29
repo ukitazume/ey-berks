@@ -11,6 +11,7 @@ import (
 
 const (
 	ConfigFileName = "EYBerksfile"
+	WorkingDirName = ".ey-berks"
 )
 
 type Berks struct {
@@ -26,9 +27,33 @@ type Main struct {
 
 type Cookbook struct {
 	Path string
-	Host string
+	host string
 	Repo string
-	NAME string
+	Name string
+}
+
+func (c *Cookbook) WorkingRootPath() string {
+	return filepath.Join(os.Getenv("HOME"), WorkingDirName)
+}
+
+func (c *Cookbook) WorkingRepoPath() string {
+	return filepath.Join(c.WorkingRootPath(), c.Host(), c.Repo)
+}
+
+func (c *Cookbook) WorkingPath() string {
+	return filepath.Join(c.WorkingRepoPath(), c.Host(), c.Repo, c.Path)
+}
+
+func (c *Cookbook) Host() string {
+	if c.host != "" {
+		return c.host
+	} else {
+		return "github.com"
+	}
+}
+
+func (c *Cookbook) RemoteUrl() string {
+	return "git://" + c.Host() + "/" + c.Repo
 }
 
 func Create(path string) error {
