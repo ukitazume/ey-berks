@@ -62,7 +62,24 @@ func updateCookbook(cookbook config.Cookbook) error {
 			fmt.Println(err)
 		}
 	} else {
-		// add to pull code
+		repo, err := git.OpenRepository(path)
+		if err != nil {
+			fmt.Println(err)
+		}
+		remote, err := repo.Remotes.Lookup("origin")
+		if err != nil {
+			fmt.Println(err)
+		}
+		err = remote.Fetch([]string{}, nil, "")
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		remoteLs, _ := remote.Ls("HEAD")
+		remoteOid := remoteLs[0].Id
+		headCommit, _ := repo.LookupCommit(remoteOid)
+		fmt.Println(headCommit)
+		repo.ResetToCommit(headCommit, git.ResetHard, &git.CheckoutOpts{})
 	}
 	return nil
 }
