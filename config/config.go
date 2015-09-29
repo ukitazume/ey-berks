@@ -41,7 +41,7 @@ func (c *Cookbook) WorkingRepoPath() string {
 }
 
 func (c *Cookbook) WorkingPath() string {
-	return filepath.Join(c.WorkingRepoPath(), c.Host(), c.Repo, c.Path)
+	return filepath.Join(c.WorkingRepoPath(), c.Path)
 }
 
 func (c *Cookbook) Host() string {
