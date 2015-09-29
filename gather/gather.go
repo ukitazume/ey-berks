@@ -57,29 +57,37 @@ func updateCookbook(cookbook config.Cookbook) error {
 	if _, err := os.Stat(path + "/.git"); os.IsNotExist(err) {
 		gitCloneOption := new(git.CloneOptions)
 		repo, err := git.Clone("git://github.com/"+cookbook.Repo, path, gitCloneOption)
-		fmt.Println(repo)
 		if err != nil {
-			fmt.Println(err)
+			return err
 		}
+		fmt.Printf("clone to locat from %s", repo.Path())
 	} else {
 		repo, err := git.OpenRepository(path)
 		if err != nil {
-			fmt.Println(err)
-		}
-		remote, err := repo.Remotes.Lookup("origin")
-		if err != nil {
-			fmt.Println(err)
-		}
-		err = remote.Fetch([]string{}, nil, "")
-		if err != nil {
-			fmt.Println(err)
+			return err
 		}
 
-		remoteLs, _ := remote.Ls("HEAD")
+		remote, err := repo.Remotes.Lookup("origin")
+		fmt.Printf("fetching to locat from %s\n", remote.Url())
+		if err != nil {
+			return err
+		}
+		if err := remote.Fetch([]string{}, nil, ""); err != nil {
+			return err
+		}
+
+		remoteLs, err := remote.Ls("HEAD")
+		if err != nil {
+			return err
+		}
 		remoteOid := remoteLs[0].Id
-		headCommit, _ := repo.LookupCommit(remoteOid)
-		fmt.Println(headCommit)
-		repo.ResetToCommit(headCommit, git.ResetHard, &git.CheckoutOpts{})
+		headCommit, err := repo.LookupCommit(remoteOid)
+		if err != nil {
+			return err
+		}
+		if err := repo.ResetToCommit(headCommit, git.ResetHard, &git.CheckoutOpts{}); err != nil {
+			return err
+		}
 	}
 	return nil
 }
