@@ -12,48 +12,61 @@ import (
 const (
 	ConfigFileName = "EYBerksfile"
 	WorkingDirName = ".ey-berks"
+	CookBookName   = "cookbooks"
 )
 
-type Berks struct {
-	Main     Main
-	Cookbook []Cookbook
+type CodeResourceOperator interface {
+	RemoteHost() string
+	RemotoRepoUrl() string /* git://github.com/egnineyard/ey-cloud-recipes */
+	CacheRepoPath() string /* /home/deploy/.ey-berks/github.com/engineyard/ey-cloud-recipes */
+	DistPath() string      /* cookbooks/env_vars */
+	Repo() string
 }
 
-type Main struct {
-	Library    string
-	Definition string
-	Host       string
+func (c CodeResource) CacheRepoPath() string {
+	return filepath.Join(os.Getenv("HOME"), WorkingDirName, c.RemoteHost(), c.Repo)
+}
+
+func (c CodeResource) DistPath() string {
+	return filepath.Join(CookBookName, c.Path)
+}
+
+type CodeResource struct {
+	Path string
+	Host string
+	Repo string
+	Name string
+	CodeResourceOperator
+}
+
+type Berks struct {
+	Library    Library
+	Definition Definition
+	Cookbooks  []Cookbook `toml:"cookbook"`
+}
+
+type Library struct {
+	*CodeResource
+}
+
+type Definition struct {
+	*CodeResource
 }
 
 type Cookbook struct {
-	Path string
-	host string
-	Repo string
-	Name string
+	*CodeResource
 }
 
-func (c *Cookbook) WorkingRootPath() string {
-	return filepath.Join(os.Getenv("HOME"), WorkingDirName)
-}
-
-func (c *Cookbook) WorkingRepoPath() string {
-	return filepath.Join(c.WorkingRootPath(), c.Host(), c.Repo)
-}
-
-func (c *Cookbook) WorkingPath() string {
-	return filepath.Join(c.WorkingRepoPath(), c.Path)
-}
-
-func (c *Cookbook) Host() string {
-	if c.host != "" {
-		return c.host
+func (c CodeResource) RemoteHost() string {
+	if c.Host != "" {
+		return c.Host
 	} else {
 		return "github.com"
 	}
 }
 
-func (c *Cookbook) RemoteUrl() string {
-	return "git://" + c.Host() + "/" + c.Repo
+func (c CodeResource) RemotoRepoUrl() string {
+	return "git://" + c.RemoteHost() + "/" + c.Repo
 }
 
 func Create(path string) error {
@@ -63,11 +76,16 @@ func Create(path string) error {
 	if err != nil {
 		return err
 	}
-	defaultFormat := `[main]
-library = "engineyard/ey-cloud-recipes/main/libraries"
-definition = "engineyard/ey-cloud-recipes/main/definitions"
+	defaultFormat := `[library]
+repo = "engineyard/ey-cloud-recipes"
+path = "main/libraries"
+
+[definition]
+repo = "engineyard/ey-cloud-recipes"
+path = "main/definitions"
 
 [[cookbook]]
+name = "env"
 repo = "engineyard/ey-cloud-recipes"
 path = "cookbooks/env_vars"
 `
