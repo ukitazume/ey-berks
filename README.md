@@ -23,7 +23,7 @@ repo = "engineyard/ey-cloud-recipes"
 path = "cookbooks/env_vars"
 
 [[cookbook]]
-host = "bitbackt.com"
+host = "bitbucket.org"
 repo = "engineyard/ey-cloud-recipes"
 srcpath = "cookbooks/env_vars"
 distpath = "cookbooks/env_vars_2"
