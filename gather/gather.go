@@ -88,6 +88,7 @@ func updateCookbook(cookbook config.Cookbook) error {
 		if err := repo.ResetToCommit(headCommit, git.ResetHard, &git.CheckoutOpts{}); err != nil {
 			return err
 		}
+		fmt.Printf(" -- now %s\n", remoteOid)
 	}
 	return nil
 }
