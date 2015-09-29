@@ -19,16 +19,26 @@ func NewGather(berksFilePath string) Gather {
 }
 
 func (g *Gather) Gather(path string) error {
-	prepareDir(g.Berks.Library, path)
-	updateCookbook(g.Berks.Library)
-	copyRecipes(g.Berks.Library, path)
+	gatherDir(g.Berks.Library, path)
+	gatherDir(g.Berks.Definition, path)
 
-	prepareDir(g.Berks.Definition, path)
-	updateCookbook(g.Berks.Definition)
 	for _, cookbook := range g.Berks.Cookbooks {
-		prepareDir(cookbook, path)
+		gatherDir(cookbook, path)
 	}
 
+	return nil
+}
+
+func gatherDir(c config.CodeResourceOperator, path string) error {
+	if err := prepareDir(c, path); err != nil {
+		return err
+	}
+	if err := updateCookbook(c); err != nil {
+		return err
+	}
+	if err := copyRecipes(c, path); err != nil {
+		return err
+	}
 	return nil
 }
 
