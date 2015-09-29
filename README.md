@@ -10,6 +10,7 @@ ey-berks init .
 ```
 
 ```
+[library]
 repo = "engineyard/ey-cloud-recipes"
 path = "cookbooks/main/libraries"
 
