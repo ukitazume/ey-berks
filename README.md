@@ -6,21 +6,29 @@
 
 ```
 cd my_cookbook
-eyberks init .
+ey-berks init .
 ```
 
 ```
-[main]
-libraries = "engineyard/ey-cloud-recipes/main/libraries"
-definitions = "engineyard/ey-cloud-recipes/main/definitions"
+repo = "engineyard/ey-cloud-recipes"
+path = "cookbooks/main/libraries"
 
-[cookbook]
-sidekiq = "engineyard/ey-cloud-recipes/cookbooks/sidekiq"
-fluentd = "ukitazume/ey-mini-recipes/cookbooks/fluentd"
+[definition]
+repo = "engineyard/ey-cloud-recipes"
+path = "cookbooks/main/definitions"
+
+[[cookbook]]
+repo = "engineyard/ey-cloud-recipes"
+path = "cookbooks/env_vars"
+
+[[cookbook]]
+host = "bitbackt.com"
+repo = "engineyard/ey-cloud-recipes"
+srcpath = "cookbooks/env_vars"
+distpath = "cookbooks/env_vars_2"
 ```
 
 
 ```
-eyberks install
+ey-berks install
 ```
-
