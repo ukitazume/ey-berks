@@ -1,4 +1,4 @@
-# ey_berkshelf
+# ey-berks
 
 [![Build Status](https://travis-ci.org/ukitazume/ey-berks.svg)](https://travis-ci.org/ukitazume/ey-berks)
 
