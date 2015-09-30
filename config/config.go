@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/BurntSushi/toml"
 )
@@ -20,6 +21,12 @@ type CodeResourceOperator interface {
 	CacheRepoPath() string   /* /home/deploy/.ey-berks/github.com/engineyard/ey-cloud-recipes */
 	DesticationPath() string /* env_vars */
 	SourcePath() string      /* env_vars */
+}
+
+func (c *CodeResource) RecipeName() string {
+	s := strings.Split(c.DesticationPath(), "/")
+	name := s[len(s)-1]
+	return name
 }
 
 func (c *CodeResource) DesticationPath() string {
