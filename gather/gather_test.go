@@ -3,6 +3,7 @@ package gather
 import (
 	"github.com/ukitazume/ey-berks/config"
 	"os"
+	"path/filepath"
 	"testing"
 )
 
@@ -20,8 +21,9 @@ func TestNewGather(t *testing.T) {
 }
 
 func removeTmpFile(t *testing.T) {
-	if err := os.Remove("/tmp/EyBerksfile"); err != nil {
-		t.Errorf("failed to remove /tmp/EyBerksfile")
+	path := filepath.Join("/tmp", config.ConfigFileName)
+	if err := os.Remove(path); err != nil {
+		t.Errorf("failed to remove %s", path)
 	}
 	if err := os.RemoveAll("/tmp/cookbooks"); err != nil {
 		t.Errorf("failed to remove /tmp/cookbooks")

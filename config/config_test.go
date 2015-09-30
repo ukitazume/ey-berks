@@ -9,17 +9,19 @@ import (
 )
 
 func removeTmpFile(t *testing.T) {
-	err := os.Remove("/tmp/EYBerksfile")
+	path := filepath.Join("/tmp", ConfigFileName)
+	err := os.Remove(path)
 	if err != nil {
-		t.Errorf("failed to remove /tmp/EYBerksfile")
+		t.Errorf("failed to remove %s", path)
 	}
 }
 
 func createConfig(t *testing.T) string {
 	Create("/tmp")
-	dat, err := ioutil.ReadFile("/tmp/EYBerksfile")
+	path := filepath.Join("/tmp", ConfigFileName)
+	dat, err := ioutil.ReadFile(path)
 	if err != nil {
-		t.Errorf("get error when opening EYBerksfile")
+		t.Errorf("get error when opening at %s", path)
 	}
 	return string(dat)
 }
