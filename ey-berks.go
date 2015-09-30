@@ -8,6 +8,10 @@ import (
 	"os"
 )
 
+const (
+	Version = "0.0.1"
+)
+
 func main() {
 	os.Exit(Command(os.Args[1:]))
 }
@@ -41,7 +45,7 @@ Usage:
 			fmt.Println(err)
 		}
 	} else if args["--version"] == true || args["-v"] == true {
-		fmt.Printf("ey-berks version is: %s", "0.1")
+		fmt.Printf("ey-berks version is: %s", Version)
 	} else {
 		fmt.Println("The command doesn't exist.Please check ey-berks help.")
 		return 0

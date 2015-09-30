@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -34,6 +35,15 @@ func getLine(text string, line int) string {
 		log.Fatalf("There is no line at line %d in %s", line, text)
 	}
 	return lines[line]
+}
+
+func TestVersion(t *testing.T) {
+	command := []string{"-v"}
+	actual := commandOutput(command)
+	expect := fmt.Sprintf("ey-berks version is: %s", Version)
+	if actual != expect {
+		t.Errorf("Expected %s, Got %s", expect, actual)
+	}
 }
 
 func TestHelp(t *testing.T) {
