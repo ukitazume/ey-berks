@@ -17,7 +17,8 @@ func removeTmpFile(t *testing.T) {
 }
 
 func createConfig(t *testing.T) string {
-	Create("/tmp")
+	options := DefaultOption()
+	Create("/tmp", options)
 	path := filepath.Join("/tmp", ConfigFileName)
 	dat, err := ioutil.ReadFile(path)
 	if err != nil {
@@ -28,7 +29,8 @@ func createConfig(t *testing.T) string {
 
 func TestCookbookRemoteRepoUrl(t *testing.T) {
 	createConfig(t)
-	berks := Parse("/tmp")
+	options := DefaultOption()
+	berks := Parse("/tmp", options)
 
 	actuals := [3]string{
 		berks.Library.RemotoRepoUrl(),
@@ -48,7 +50,8 @@ func TestCookbookRemoteRepoUrl(t *testing.T) {
 
 func TestCacheRepoPath(t *testing.T) {
 	createConfig(t)
-	berks := Parse("/tmp")
+	options := DefaultOption()
+	berks := Parse("/tmp", options)
 
 	actual := berks.Library.CacheRepoPath()
 	expect := filepath.Join(os.Getenv("HOME"), CacheDirName, berks.Library.RemoteHost(), berks.Library.Repo)
@@ -72,7 +75,7 @@ func TestDefaultOption(t *testing.T) {
 	opts := DefaultOption()
 
 	actual := opts.ConfigFileName
-	expect := "EyBerkfile"
+	expect := "EyBerksfile"
 	if actual != expect {
 		t.Errorf("Expected %s, Got %s", expect, actual)
 	}

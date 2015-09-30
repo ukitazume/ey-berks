@@ -8,11 +8,12 @@ import (
 )
 
 func TestNewGather(t *testing.T) {
-	if err := config.Create("/tmp"); err != nil {
+	opts := config.DefaultOption()
+	if err := config.Create("/tmp", opts); err != nil {
 		t.Errorf("cannot create Berksfile with %d", err)
 	}
-	gather := NewGather("/tmp")
-	err := gather.Gather("/tmp")
+	berks := config.Parse("/tmp", opts)
+	err := Gather("/tmp", berks)
 	if err != nil {
 		t.Errorf("%d", err)
 	}

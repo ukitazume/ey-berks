@@ -10,10 +10,11 @@ import (
 )
 
 func prepare(t *testing.T) config.Berks {
-	if err := config.Create("/tmp"); err != nil {
+	opts := config.DefaultOption()
+	if err := config.Create("/tmp", opts); err != nil {
 		t.Errorf("cannot create Berksfile with %d", err)
 	}
-	berks := config.Parse("/tmp")
+	berks := config.Parse("/tmp", opts)
 	return berks
 }
 
