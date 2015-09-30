@@ -66,5 +66,20 @@ func TestCreate(t *testing.T) {
 		t.Errorf("not include %v in %v", r, actual)
 	}
 	removeTmpFile(t)
+}
 
+func TestDefaultOption(t *testing.T) {
+	opts := DefaultOption()
+
+	actual := opts.ConfigFileName
+	expect := "EyBerkfile"
+	if actual != expect {
+		t.Errorf("Expected %s, Got %s", expect, actual)
+	}
+
+	actual = opts.TargetDirName
+	expect = "cookbooks"
+	if actual != expect {
+		t.Errorf("Expected %s, Got %s", expect, actual)
+	}
 }

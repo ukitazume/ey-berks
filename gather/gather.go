@@ -9,25 +9,33 @@ import (
 	"path/filepath"
 )
 
-type Gather struct {
-	Berks config.Berks
-}
-
-func NewGather(berksFilePath string) Gather {
-	bersk := config.Parse(berksFilePath)
-	return Gather{Berks: bersk}
-}
-
-func (g *Gather) Gather(path string) error {
-	if err := gatherDir(g.Berks.Library, path); err != nil {
+func Gather(path string, berks config.Berks) error {
+	if err := gatherDir(berks.Library, path); err != nil {
 		fmt.Printf("error: %v", err)
 	}
-	if err := gatherDir(g.Berks.Definition, path); err != nil {
+	if err := gatherDir(berks.Definition, path); err != nil {
 		fmt.Printf("error: %v", err)
 	}
 
-	for _, cookbook := range g.Berks.Cookbooks {
+	for _, cookbook := range berks.Cookbooks {
 		if err := gatherDir(cookbook, path); err != nil {
+			fmt.Printf("error: %v", err)
+		}
+	}
+
+	return nil
+}
+
+func Copy(path string, berks config.Berks) error {
+	if err := copyRecipes(berks.Library, path); err != nil {
+		fmt.Printf("error: %v", err)
+	}
+	if err := copyRecipes(berks.Definition, path); err != nil {
+		fmt.Printf("error: %v", err)
+	}
+
+	for _, cookbook := range berks.Cookbooks {
+		if err := copyRecipes(cookbook, path); err != nil {
 			fmt.Printf("error: %v", err)
 		}
 	}
@@ -40,9 +48,6 @@ func gatherDir(c config.CodeResourceOperator, path string) error {
 		return err
 	}
 	if err := updateCookbook(c); err != nil {
-		return err
-	}
-	if err := copyRecipes(c, path); err != nil {
 		return err
 	}
 	return nil
@@ -102,6 +107,9 @@ func updateCookbook(c config.CodeResourceOperator) error {
 }
 
 func copyRecipes(c config.CodeResourceOperator, path string) error {
+	if err := prepareDir(c, path); err != nil {
+		return err
+	}
 	destDir := filepath.Join(path, c.DesticationPath())
 	srcDir := filepath.Join(c.CacheRepoPath(), c.SourcePath())
 	fmt.Printf(" -- copy %s to %s\n", srcDir, destDir)

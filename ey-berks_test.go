@@ -3,12 +3,36 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"github.com/docopt/docopt-go"
 	"io"
 	"log"
 	"os"
 	"strings"
 	"testing"
 )
+
+func TestParseArgs(t *testing.T) {
+	cmd := []string{"help", "pathpath", "--config=Berkfile", "--target=test"}
+	args, _ := docopt.Parse(usage(), cmd, true, "", false)
+	command, path, config, target := parseArgs(args)
+
+	if command != "help" {
+		log.Fatal("erro parse command")
+	}
+
+	if path != "pathpath" {
+		log.Fatal("erro parse path")
+	}
+
+	if config != "Berkfile" {
+		log.Fatalf("erro parse opts config: %v", config)
+	}
+
+	if target != "test" {
+		log.Fatalf("erro parse opts target: %v", target)
+	}
+
+}
 
 func commandOutput(args []string) (output string) {
 	old := os.Stdout
@@ -38,7 +62,7 @@ func getLine(text string, line int) string {
 }
 
 func TestVersion(t *testing.T) {
-	command := []string{"-v"}
+	command := []string{"version"}
 	actual := commandOutput(command)
 	expect := fmt.Sprintf("ey-berks version is: %s", Version)
 	if actual != expect {
