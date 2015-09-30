@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/docopt/docopt-go"
+	author "github.com/ukitazume/ey-berks/author"
 	"github.com/ukitazume/ey-berks/config"
 	"github.com/ukitazume/ey-berks/gather"
 	"os"
@@ -40,9 +41,15 @@ Usage:
 		}
 	} else if args["make"] == true {
 		path := args["<path>"].(string)
+
 		g := gather.NewGather(path)
 		if err := g.Gather(path); err != nil {
 			fmt.Println(err)
+		}
+
+		list := author.CreateMainRecipe(g.Berks)
+		if err := author.CreateFile(path, list); err != nil {
+			fmt.Printf("error: %v\\\\n", err)
 		}
 	} else if args["--version"] == true || args["-v"] == true {
 		fmt.Printf("ey-berks version is: %s", Version)
