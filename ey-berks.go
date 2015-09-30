@@ -21,7 +21,7 @@ func Command(argv []string) int {
 	usage := `Engine Yard Cloud cookbook berkshelf
 
 Usage:
-  ey-berks init <path>
+  ey-berks configure <path>
 	ey-berks make <path>
 	ey-berks help
 	ey-berks -v | --version
@@ -32,7 +32,7 @@ Usage:
 	if args["help"] == true {
 		fmt.Print(usage)
 		return 0
-	} else if args["init"] == true {
+	} else if args["configure"] == true {
 		fmt.Printf("create %s at %s\n", config.ConfigFileName, args["<path>"])
 		path := args["<path>"].(string)
 		if err := config.Create(path); err != nil {
