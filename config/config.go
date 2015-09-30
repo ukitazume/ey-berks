@@ -12,7 +12,7 @@ import (
 
 const (
 	ConfigFileName = "EyBerksfile"
-	WorkingDirName = ".ey-berks"
+	CacheDirName   = ".ey-berks"
 )
 
 type CodeResourceOperator interface {
@@ -46,7 +46,7 @@ func (c *CodeResource) SourcePath() string {
 }
 
 func (c *CodeResource) CacheRepoPath() string {
-	return filepath.Join(os.Getenv("HOME"), WorkingDirName, c.RemoteHost(), c.Repo)
+	return filepath.Join(os.Getenv("HOME"), CacheDirName, c.RemoteHost(), c.Repo)
 }
 
 type CodeResource struct {

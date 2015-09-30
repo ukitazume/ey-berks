@@ -51,7 +51,7 @@ func TestCacheRepoPath(t *testing.T) {
 	berks := Parse("/tmp")
 
 	actual := berks.Library.CacheRepoPath()
-	expect := filepath.Join(os.Getenv("HOME"), WorkingDirName, berks.Library.RemoteHost(), berks.Library.Repo)
+	expect := filepath.Join(os.Getenv("HOME"), CacheDirName, berks.Library.RemoteHost(), berks.Library.Repo)
 	if expect != actual {
 		t.Errorf("wrong RemoteRepoURL expect %v, got %v", expect, actual)
 	}
