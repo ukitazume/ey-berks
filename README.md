@@ -11,8 +11,9 @@ Engine Yard Custom Chef tool like Berfshef.
 ### Getting Start
 
 ```
-ey-berks config .
-ey-berks compile .
+$ey-berks config .
+$ey-berks compile .
+$ey recipes upload -e env_name
 ```
 
 ### Usage
