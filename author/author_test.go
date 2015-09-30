@@ -26,15 +26,15 @@ func tearDown(t *testing.T) {
 
 func TestCreateFile(t *testing.T) {
 	berks := prepare(t)
-	list := createMainRecipe(berks)
-	if err := createFile("/tmp", list); err != nil {
+	list := CreateMainRecipe(berks)
+	if err := CreateFile("/tmp", list); err != nil {
 		t.Errorf("error: %v", err)
 	}
 }
 
 func TestCreateMainRecipe(t *testing.T) {
 	berks := prepare(t)
-	list := createMainRecipe(berks)
+	list := CreateMainRecipe(berks)
 
 	for _, v := range []string{"env_vars", "custom_nginx"} {
 		requireLine := fmt.Sprintf("include_recipe \"%s\"", v)

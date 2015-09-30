@@ -15,7 +15,7 @@ func getList(berks config.Berks) (list []string) {
 	return
 }
 
-func createFile(path string, content string) error {
+func CreateFile(path string, content string) error {
 	fullPath := filepath.Join(path, "cookbooks", "main", "recipes")
 	fileName := filepath.Join(fullPath, "default.rb")
 	if err := os.MkdirAll(fullPath, 0744); err != nil {
@@ -32,7 +32,7 @@ func createFile(path string, content string) error {
 	return nil
 }
 
-func createMainRecipe(berks config.Berks) string {
+func CreateMainRecipe(berks config.Berks) string {
 	var buffer bytes.Buffer
 	descList := "# Created by ey-berks\n"
 	buffer.WriteString(descList)
