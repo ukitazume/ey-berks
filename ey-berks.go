@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/docopt/docopt-go"
 	"github.com/ukitazume/ey-berks/config"
+	"github.com/ukitazume/ey-berks/gather"
 	"os"
 )
 
@@ -28,9 +29,16 @@ Usage:
 		return 0
 	} else if args["init"] == true {
 		fmt.Printf("create %s at %s\n", config.ConfigFileName, args["<path>"])
-		if err := config.Create(argv[1]); err != nil {
+		path := args["<path>"].(string)
+		if err := config.Create(path); err != nil {
 			fmt.Println(err)
 			return 1
+		}
+	} else if args["make"] == true {
+		path := args["<path>"].(string)
+		g := gather.NewGather(path)
+		if err := g.Gather(path); err != nil {
+			fmt.Println(err)
 		}
 	} else if args["--version"] == true || args["-v"] == true {
 		fmt.Printf("ey-berks version is: %s", "0.1")
