@@ -18,7 +18,7 @@ func main() {
 }
 
 func usage() string {
-	return `Engine Yard Cloud cookbook Berkshelf
+	return `Engine Yard Cloud cookbook tool like Berkshelf
 
 Usage: ey-berks <command> [<path>] [--config=<config>]
 

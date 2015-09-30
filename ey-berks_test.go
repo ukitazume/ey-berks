@@ -12,9 +12,9 @@ import (
 )
 
 func TestParseArgs(t *testing.T) {
-	cmd := []string{"help", "pathpath", "--config=Berkfile", "--target=test"}
+	cmd := []string{"help", "pathpath", "--config=Berkfile"}
 	args, _ := docopt.Parse(usage(), cmd, true, "", false)
-	command, path, config, target := parseArgs(args)
+	command, path, config := parseArgs(args)
 
 	if command != "help" {
 		log.Fatal("erro parse command")
@@ -26,10 +26,6 @@ func TestParseArgs(t *testing.T) {
 
 	if config != "Berkfile" {
 		log.Fatalf("erro parse opts config: %v", config)
-	}
-
-	if target != "test" {
-		log.Fatalf("erro parse opts target: %v", target)
 	}
 
 }
@@ -73,7 +69,7 @@ func TestVersion(t *testing.T) {
 func TestHelp(t *testing.T) {
 	command := []string{"help"}
 	actual := getLine(commandOutput(command), 0)
-	expect := "Engine Yard Cloud cookbook berkshelf"
+	expect := "Engine Yard Cloud cookbook tool like Berkshelf"
 	if actual != expect {
 		t.Errorf("Expected %s, Got %s", expect, actual)
 	}
