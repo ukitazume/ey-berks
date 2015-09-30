@@ -7,7 +7,6 @@ Engine Yard Custom Chef tool like Berfshef.
 
 ![ScreenCast](http://showterm.io/a1a9b260062666a5238a6)
 
-[![ScreenShot](https://raw.github.com/GabLeRoux/WebMole/master/ressources/WebMole_Youtube_Video.png)](http://showterm.io/a1a9b260062666a5238a6)
 
 ### Getting Start
 
