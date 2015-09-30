@@ -30,8 +30,8 @@ type CodeResourceOperator interface {
 	RemotoRepoUrl() string   /* git@github.com:engineyard/ey-cloud-recipes */
 	CacheRepoPath() string   /* /home/deploy/.ey-berks/github.com/engineyard/ey-cloud-recipes */
 	DesticationPath() string /* cookbooks/env_vars */
-	SourcePath() string      /* env_vars */
 	RecipeName() string
+	SourcePath() string
 }
 
 func (c *CodeResource) RecipeName() string {
@@ -49,11 +49,7 @@ func (c *CodeResource) DesticationPath() string {
 }
 
 func (c *CodeResource) SourcePath() string {
-	if c.SrcPath == "" {
-		return c.Path
-	} else {
-		return c.SrcPath
-	}
+	return c.Path
 }
 
 func (c *CodeResource) CacheRepoPath() string {
@@ -61,11 +57,10 @@ func (c *CodeResource) CacheRepoPath() string {
 }
 
 type CodeResource struct {
-	Path    string
-	SrcPath string
-	Name    string
-	Host    string
-	Repo    string
+	Path string
+	Name string
+	Host string
+	Repo string
 	CodeResourceOperator
 }
 

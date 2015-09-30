@@ -88,7 +88,6 @@ gather/cookbooks/
 
 - repo(requires): repository name
 - path(requires): the library path in the repository
-- srcpath(option. default: path) the recipe path of the repository 
 - name(option) the path that is used for creating cookbook directory
 - host(option, default: github.com) the remote repository hostname
 
