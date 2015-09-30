@@ -19,11 +19,17 @@ func NewGather(berksFilePath string) Gather {
 }
 
 func (g *Gather) Gather(path string) error {
-	gatherDir(g.Berks.Library, path)
-	gatherDir(g.Berks.Definition, path)
+	if err := gatherDir(g.Berks.Library, path); err != nil {
+		fmt.Printf("error: %v", err)
+	}
+	if err := gatherDir(g.Berks.Definition, path); err != nil {
+		fmt.Printf("error: %v", err)
+	}
 
 	for _, cookbook := range g.Berks.Cookbooks {
-		gatherDir(cookbook, path)
+		if err := gatherDir(cookbook, path); err != nil {
+			fmt.Printf("error: %v", err)
+		}
 	}
 
 	return nil
@@ -57,6 +63,7 @@ func updateCookbook(c config.CodeResourceOperator) error {
 	path := c.CacheRepoPath()
 	if _, err := os.Stat(path + "/.git"); os.IsNotExist(err) {
 		gitCloneOption := new(git.CloneOptions)
+		fmt.Println(c.RemotoRepoUrl())
 		if _, err := git.Clone(c.RemotoRepoUrl(), path, gitCloneOption); err != nil {
 			return err
 		}
@@ -88,6 +95,7 @@ func updateCookbook(c config.CodeResourceOperator) error {
 		if err := repo.ResetToCommit(headCommit, git.ResetHard, &git.CheckoutOpts{}); err != nil {
 			return err
 		}
+		// TODO use short ref id
 		fmt.Printf(" -- now %s\n", remoteOid)
 	}
 	return nil

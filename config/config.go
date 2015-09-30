@@ -16,7 +16,7 @@ const (
 
 type CodeResourceOperator interface {
 	RemoteHost() string
-	RemotoRepoUrl() string   /* git://github.com/egnineyard/ey-cloud-recipes */
+	RemotoRepoUrl() string   /* git@github.com:engineyard/ey-cloud-recipes */
 	CacheRepoPath() string   /* /home/deploy/.ey-berks/github.com/engineyard/ey-cloud-recipes */
 	DesticationPath() string /* env_vars */
 	SourcePath() string      /* env_vars */
@@ -79,7 +79,11 @@ func (c *CodeResource) RemoteHost() string {
 }
 
 func (c *CodeResource) RemotoRepoUrl() string {
-	return "git://" + c.RemoteHost() + "/" + c.Repo
+	if c.Host == "bitbucket.org" {
+		return "https://" + c.RemoteHost() + "/" + c.Repo + ".git"
+	} else {
+		return "git://" + c.RemoteHost() + "/" + c.Repo
+	}
 }
 
 func Create(path string) error {
@@ -98,10 +102,15 @@ repo = "engineyard/ey-cloud-recipes"
 path = "cookbooks/main/definitions"
 
 [[cookbook]]
-name = "env"
 repo = "engineyard/ey-cloud-recipes"
 path = "cookbooks/env_vars"
+
+[[cookbook]]
+host = "bitbucket.org"
+repo = "ukitazume/ey-mini-cookbooks"
+path = "cookbooks/custom_nginx"
 `
+
 	f.Write([]byte(defaultFormat))
 	f.Close()
 
