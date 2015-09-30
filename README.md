@@ -5,10 +5,25 @@
 ### Getting Start
 
 ```
-cd my_cookbook
-ey-berks init .
+ey-berks config .
+ey-berks compile .
 ```
 
+### Usage
+
+```
+Engine Yard Cloud cookbook Berkshelf
+
+Usage: ey-berks <command> [<path>] [--config=<config>]
+
+ey-berks config <path> [--config=<config>]             : make a sample configuration file
+ey-berks compile <path> [--config=<config>]            : update cahce,  write a main/recipes and gather recipe to the cookbooks directory
+ey-berks update-cache [--config=<config>]              : update cache of remote repositories cookbooks
+ey-berks create-main-recipe <path> [--config=<config>]
+ey-berks copy-recipes <path> [--config=<config>]
+ey-berks help
+ey-berks version
+```
 
 ### Configration File
 
@@ -18,10 +33,12 @@ use TOML for the configuration like that
 [library]
 repo = "engineyard/ey-cloud-recipes"
 path = "cookbooks/main/libraries"
+name = "main/libraries"
 
 [definition]
 repo = "engineyard/ey-cloud-recipes"
 path = "cookbooks/main/definitions"
+name = "main/definitions"
 
 [[cookbook]]
 repo = "engineyard/ey-cloud-recipes"
@@ -67,14 +84,8 @@ gather/cookbooks/
 - repo(requires): repository name
 - path(requires): the library path in the repository
 - srcpath(option. default: path) the recipe path of the repository 
-- distpath(option, default: path) the path that is used for creating cookbook directory
+- name(option) the path that is used for creating cookbook directory
 - host(option, default: github.com) the remote repository hostname
-
-
-
-```
-ey-berks install
-```
 
 
 #### apply you own atributes file
