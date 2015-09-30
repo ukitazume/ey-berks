@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/docopt/docopt-go"
 	"github.com/ukitazume/ey-berks/config"
 	"os"
 )
@@ -11,36 +12,29 @@ func main() {
 }
 
 func Command(argv []string) int {
+	usage := `Engine Yard Cloud cookbook berkshelf
 
-	usage := `
-Engine Yard Cloud cookbook berkshelf
-Usage: ey-berks <command> [<args>...]
-
-Command:
-
-init     create an EYBerkshelf file
-make     make cookbook directory
-help     show this usage
+Usage:
+  ey-berks init <path>
+	ey-berks make <path>
+	ey-berks help
+	ey-berks -v | --version
 `
 
-	if len(argv) == 0 {
-		fmt.Print(usage)
-		return 0
-	}
+	args, _ := docopt.Parse(usage, argv, true, "", false)
 
-	switch argv[0] {
-	case "help":
+	if args["help"] == true {
 		fmt.Print(usage)
 		return 0
-	case "init":
-		fmt.Println("create EYBerksfile")
-		err := config.Create(argv[1])
-		if err != nil {
-			fmt.Print(err)
+	} else if args["init"] == true {
+		fmt.Printf("create %s at %s\n", config.ConfigFileName, args["<path>"])
+		if err := config.Create(argv[1]); err != nil {
+			fmt.Println(err)
 			return 1
 		}
-		return 0
-	default:
+	} else if args["--version"] == true || args["-v"] == true {
+		fmt.Printf("ey-berks version is: %s", "0.1")
+	} else {
 		fmt.Println("The command doesn't exist.Please check ey-berks help.")
 		return 0
 	}

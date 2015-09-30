@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	ConfigFileName = "EYBerksfile"
+	ConfigFileName = "EyBerksfile"
 	WorkingDirName = ".ey-berks"
 )
 

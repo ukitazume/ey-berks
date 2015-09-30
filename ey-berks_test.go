@@ -36,27 +36,9 @@ func getLine(text string, line int) string {
 	return lines[line]
 }
 
-func TestNoArgs(t *testing.T) {
-	command := []string{}
-	actual := getLine(commandOutput(command), 1)
-	expect := "Engine Yard Cloud cookbook berkshelf"
-	if actual != expect {
-		t.Errorf("got %v\nwant %v", actual, expect)
-	}
-}
-
-func TestNoDefindeArg(t *testing.T) {
-	command := []string{"hoge"}
-	actual := getLine(commandOutput(command), 0)
-	expect := "The command doesn't exist.Please check ey-berks help."
-	if actual != expect {
-		t.Errorf("got %v\nwant %v", actual, expect)
-	}
-}
-
 func TestHelp(t *testing.T) {
 	command := []string{"help"}
-	actual := getLine(commandOutput(command), 1)
+	actual := getLine(commandOutput(command), 0)
 	expect := "Engine Yard Cloud cookbook berkshelf"
 	if actual != expect {
 		t.Errorf("Expected %s, Got %s", expect, actual)
