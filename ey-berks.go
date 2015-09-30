@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/docopt/docopt-go"
-	author "github.com/ukitazume/ey-berks/author"
+	"github.com/ukitazume/ey-berks/author"
 	"github.com/ukitazume/ey-berks/config"
 	"github.com/ukitazume/ey-berks/gather"
 	"os"
