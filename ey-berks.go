@@ -58,10 +58,10 @@ func Command(argv []string) int {
 			cookbookPath := filepath.Join(path, configOptions.ConfigFileName)
 			configPath := filepath.Join(path, configOptions.TargetDirName)
 			if err := os.RemoveAll(cookbookPath); err != nil {
-				fmt.Println("error")
+				fmt.Printf("error: dont' remove because %v\n", err)
 			}
 			if err := os.RemoveAll(configPath); err != nil {
-				fmt.Println("error")
+				fmt.Printf("error: dont' remove because %v\n", err)
 			}
 			fmt.Println("removed")
 		}
