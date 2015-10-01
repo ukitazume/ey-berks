@@ -29,7 +29,7 @@ ey-berks compile <path> [--config=<config>]            : update cahce,  write a 
 ey-berks update-cache [--config=<config>]              : update cache of remote repositories cookbooks
 ey-berks create-main-recipe <path> [--config=<config>] : create main recipes from the configration file
 ey-berks copy-recipes <path> [--config=<config>]       : copy recipes from the cache dir to the cookbooks/ directory
-ey-berks clear <path>
+ey-berks clear <path>                                  : remove EyBerksfile and cookbooks directory
 ey-berks help                                          : show this help
 ey-berks version                                       : show the version
 `
