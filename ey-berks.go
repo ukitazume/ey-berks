@@ -6,7 +6,9 @@ import (
 	"github.com/ukitazume/ey-berks/author"
 	"github.com/ukitazume/ey-berks/config"
 	"github.com/ukitazume/ey-berks/gather"
+	"log"
 	"os"
+	"path/filepath"
 )
 
 const (
@@ -27,6 +29,7 @@ ey-berks compile <path> [--config=<config>]            : update cahce,  write a 
 ey-berks update-cache [--config=<config>]              : update cache of remote repositories cookbooks
 ey-berks create-main-recipe <path> [--config=<config>] : create main recipes from the configration file
 ey-berks copy-recipes <path> [--config=<config>]       : copy recipes from the cache dir to the cookbooks/ directory
+ey-berks clear <path>
 ey-berks help                                          : show this help
 ey-berks version                                       : show the version
 `
@@ -47,6 +50,21 @@ func Command(argv []string) int {
 		fmt.Printf("ey-berks version is: %s", Version)
 	case "help":
 		fmt.Print(usage())
+		return 0
+	case "clear":
+		fmt.Println("remove cookbooks and %s at %s ? [y, yes|n, no]", configOptions.ConfigFileName, path)
+		if askForConfirmation() {
+			fmt.Println("removing cookbooks/ and %s", configOptions.ConfigFileName)
+			cookbookPath := filepath.Join(path, configOptions.ConfigFileName)
+			configPath := filepath.Join(path, configOptions.TargetDirName)
+			if err := os.RemoveAll(cookbookPath); err != nil {
+				fmt.Println("error")
+			}
+			if err := os.RemoveAll(configPath); err != nil {
+				fmt.Println("error")
+			}
+			fmt.Println("removed")
+		}
 		return 0
 	case "config":
 		fmt.Printf("Creating a sample configuration file, %s at %s\n", configOptions.ConfigFileName, path)
@@ -97,6 +115,37 @@ func Command(argv []string) int {
 		return 0
 	}
 	return 0
+}
+
+func askForConfirmation() bool {
+	var response string
+	_, err := fmt.Scanln(&response)
+	if err != nil {
+		log.Fatal(err)
+	}
+	okayResponses := []string{"y", "Y", "yes", "Yes", "YES"}
+	nokayResponses := []string{"n", "N", "no", "No", "NO"}
+	if containsString(okayResponses, response) {
+		return true
+	} else if containsString(nokayResponses, response) {
+		return false
+	} else {
+		fmt.Println("Please type yes or no and then press enter:")
+		return askForConfirmation()
+	}
+}
+
+func containsString(slice []string, element string) bool {
+	return !(posString(slice, element) == -1)
+}
+
+func posString(slice []string, element string) int {
+	for index, elem := range slice {
+		if elem == element {
+			return index
+		}
+	}
+	return -1
 }
 
 func parseArgs(args map[string]interface{}) (command string, path string, config string) {
