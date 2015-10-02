@@ -176,7 +176,12 @@ func posString(slice []string, element string) int {
 
 func parseArgs(argv []string) (command string, args []string, options map[string]string) {
 	options = map[string]string{}
-	command = argv[0]
+	if len(argv) >= 1 {
+		command = argv[0]
+	} else {
+		command = "help"
+		return
+	}
 	reg, _ := regexp.Compile("--([a-z]+)=(.+)")
 	for _, value := range argv[1:] {
 		if match := reg.FindStringSubmatch(value); len(match) == 3 {
