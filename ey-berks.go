@@ -44,6 +44,10 @@ func Command(argv []string) int {
 	if options["config"] != "" {
 		configOptions.ConfigFileName = options["config"]
 	}
+	path := "./"
+	if len(args) > 0 {
+		path = args[0]
+	}
 
 	switch command {
 	case "version":
@@ -52,58 +56,58 @@ func Command(argv []string) int {
 		fmt.Print(usage())
 		return 0
 	case "clear":
-		fmt.Println("remove cookbooks and %s at %s ? [y, yes|n, no]", configOptions.ConfigFileName, args[0])
+		fmt.Println("remove cookbooks and %s at %s ? [y, yes|n, no]", configOptions.ConfigFileName, path)
 		if askForConfirmation() {
 			fmt.Println("removing cookbooks/ and %s", configOptions.ConfigFileName)
 			removeDirs(
-				filepath.Join(args[0], configOptions.ConfigFileName),
-				filepath.Join(args[0], configOptions.TargetDirName),
+				filepath.Join(path, configOptions.ConfigFileName),
+				filepath.Join(path, configOptions.TargetDirName),
 			)
 			fmt.Println("removed")
 		}
 		return 0
 	case "config":
-		fmt.Printf("Creating a sample configuration file, %s at %s\n", configOptions.ConfigFileName, args[0])
+		fmt.Printf("Creating a sample configuration file, %s at %s\n", configOptions.ConfigFileName, path)
 
-		if config.IsExistConfigFile(args[0], configOptions) {
+		if config.IsExistConfigFile(path, configOptions) {
 			fmt.Println("Error: The configration file alrady exists")
 			return 1
 		}
 
-		if err := config.Create(args[0], configOptions); err != nil {
+		if err := config.Create(path, configOptions); err != nil {
 			fmt.Println(err)
 			return 1
 		}
 	case "update-cache":
 		fmt.Println("Updatint cookbook caches")
-		berks := config.Parse(args[0], configOptions)
-		if err := gather.Gather(args[0], berks); err != nil {
+		berks := config.Parse(path, configOptions)
+		if err := gather.Gather(path, berks); err != nil {
 			fmt.Println(err)
 		}
 	case "create-main-recipe":
-		berks := config.Parse(args[0], configOptions)
+		berks := config.Parse(path, configOptions)
 		list := author.CreateMainRecipe(berks)
-		if err := author.CreateFile(args[0], list); err != nil {
+		if err := author.CreateFile(path, list); err != nil {
 			fmt.Printf("error: %v\n", err)
 		}
 	case "copy-recipes":
-		berks := config.Parse(args[0], configOptions)
-		if err := gather.Copy(args[0], berks); err != nil {
+		berks := config.Parse(path, configOptions)
+		if err := gather.Copy(path, berks); err != nil {
 			fmt.Printf("error: %v\n", err)
 		}
 	case "compile":
-		berks := config.Parse(args[0], configOptions)
+		berks := config.Parse(path, configOptions)
 
-		if err := gather.Gather(args[0], berks); err != nil {
+		if err := gather.Gather(path, berks); err != nil {
 			fmt.Println(err)
 		}
 
 		list := author.CreateMainRecipe(berks)
-		if err := author.CreateFile(args[0], list); err != nil {
+		if err := author.CreateFile(path, list); err != nil {
 			fmt.Printf("error: %v\n", err)
 		}
 
-		if err := gather.Copy(args[0], berks); err != nil {
+		if err := gather.Copy(path, berks); err != nil {
 			fmt.Printf("error: %v\n", err)
 		}
 	default:
