@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"regexp"
 
+	"github.com/ukitazume/ey-berks/attribute"
 	"github.com/ukitazume/ey-berks/author"
 	"github.com/ukitazume/ey-berks/config"
 	"github.com/ukitazume/ey-berks/gather"
@@ -24,16 +25,16 @@ func usage() string {
 	return `Engine Yard Cloud cookbook tool like Berkshelf
 
 Usage:
-  ey-berks config <path>              : make a sample configuration file (default path=$PWD, --config=EyBerks)
-  ey-berks compile <path> --config=<path to EyBerks>           : update cahce,  write a main/recipes and gather recipe to the cookbooks directory
-  ey-berks update-cache               : update cache of remote repositories cookbooks
-  ey-berks create-main-recipe <path>: create main recipes from the configration file
-  ey-berks copy-recipes <path>    : copy recipes from the cache dir to the cookbooks/ directory
-  ey-berks clear <path>                                  : remove EyBerksfile and cookbooks directory
-  ey-berks gather-attributes <path> --target=<cookbooks path>              : apply attbiutes for cookbook directory
-  ey-berks apply-attributes <path> ---atributes=<attributes directory>           : apply attbiutes for cookbook directory
-  ey-berks help                                          : show this help
-  ey-berks version                                       : show the version
+  ey-berks config <path>                                               : make a sample configuration file (default path=$PWD, --config=EyBerks)
+  ey-berks compile <path> --config=<path to EyBerks>                   : update cahce,  write a main/recipes and gather recipe to the cookbooks directory
+  ey-berks update-cache                                                : update cache of remote repositories cookbooks
+  ey-berks create-main-recipe <path>                                   : create main recipes from the configration file
+  ey-berks copy-recipes <path>                                         : copy recipes from the cache dir to the cookbooks/ directory
+  ey-berks clear <path>                                                : remove EyBerksfile and cookbooks directory
+  ey-berks gather-attr <path> --from=</path/cookbooks>         : gather attbiutes from cookbook directory
+  ey-berks apply-attr <path> ---from=<attributes directory> : apply attbiutes for cookbook directory
+  ey-berks help                                                        : show this help
+  ey-berks version                                                     : show the version
 `
 }
 
@@ -108,6 +109,24 @@ func Command(argv []string) int {
 		}
 
 		if err := gather.Copy(path, berks); err != nil {
+			fmt.Printf("error: %v\n", err)
+		}
+	case "apply-attr":
+		if _, ok := options["from"]; !ok {
+			fmt.Println("require --from=directory path")
+			return 1
+		}
+		attrOptions := attribute.DefaultOptions()
+		if err := attribute.Apply(path, options["from"], attrOptions); err != nil {
+			fmt.Printf("error: %v\n", err)
+		}
+	case "gather-attr":
+		if _, ok := options["from"]; !ok {
+			fmt.Println("require --from=directory path")
+			return 1
+		}
+		attrOptions := attribute.DefaultOptions()
+		if err := attribute.Gather(options["from"], path, attrOptions); err != nil {
 			fmt.Printf("error: %v\n", err)
 		}
 	default:
