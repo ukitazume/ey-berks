@@ -7,8 +7,7 @@
 
 Engine Yard Custom Chef tool like Berfshef.
 
-![ScreenCast](http://showterm.io/c8df12c47ff6391ca2a2c)
-
+ScreenCast http://showterm.io/c8df12c47ff6391ca2a2c
 
 ### Basic Usage
 
