@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"github.com/docopt/docopt-go"
 	"io"
 	"log"
 	"os"
@@ -13,19 +12,18 @@ import (
 
 func TestParseArgs(t *testing.T) {
 	cmd := []string{"help", "pathpath", "--config=Berkfile"}
-	args, _ := docopt.Parse(usage(), cmd, true, "", false)
-	command, path, config := parseArgs(args)
+	command, args, options := parseArgs(cmd)
 
 	if command != "help" {
 		log.Fatal("erro parse command")
 	}
 
-	if path != "pathpath" {
-		log.Fatal("erro parse path")
+	if options["config"] != "Berkfile" {
+		log.Fatal("erro parse --config")
 	}
 
-	if config != "Berkfile" {
-		log.Fatalf("erro parse opts config: %v", config)
+	if args[0] != "pathpath" {
+		log.Fatal("erro parse args")
 	}
 
 }

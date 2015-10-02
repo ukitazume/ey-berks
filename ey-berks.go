@@ -2,13 +2,14 @@ package main
 
 import (
 	"fmt"
-	"github.com/docopt/docopt-go"
-	"github.com/ukitazume/ey-berks/author"
-	"github.com/ukitazume/ey-berks/config"
-	"github.com/ukitazume/ey-berks/gather"
 	"log"
 	"os"
 	"path/filepath"
+	"regexp"
+
+	"github.com/ukitazume/ey-berks/author"
+	"github.com/ukitazume/ey-berks/config"
+	"github.com/ukitazume/ey-berks/gather"
 )
 
 const (
@@ -22,27 +23,26 @@ func main() {
 func usage() string {
 	return `Engine Yard Cloud cookbook tool like Berkshelf
 
-Usage: ey-berks <command> [<path>] [--config=<config>]
-
-ey-berks config <path> [--config=<config>]             : make a sample configuration file
-ey-berks compile <path> [--config=<config>]            : update cahce,  write a main/recipes and gather recipe to the cookbooks directory
-ey-berks update-cache [--config=<config>]              : update cache of remote repositories cookbooks
-ey-berks create-main-recipe <path> [--config=<config>] : create main recipes from the configration file
-ey-berks copy-recipes <path> [--config=<config>]       : copy recipes from the cache dir to the cookbooks/ directory
-ey-berks clear <path>                                  : remove EyBerksfile and cookbooks directory
-ey-berks help                                          : show this help
-ey-berks version                                       : show the version
+Usage:
+  ey-berks config <path>              : make a sample configuration file (default path=$PWD, --config=EyBerks)
+  ey-berks compile <path> --config=<path to EyBerks>           : update cahce,  write a main/recipes and gather recipe to the cookbooks directory
+  ey-berks update-cache               : update cache of remote repositories cookbooks
+  ey-berks create-main-recipe <path>: create main recipes from the configration file
+  ey-berks copy-recipes <path>    : copy recipes from the cache dir to the cookbooks/ directory
+  ey-berks clear <path>                                  : remove EyBerksfile and cookbooks directory
+  ey-berks gather-attributes <path> --target=<cookbooks path>              : apply attbiutes for cookbook directory
+  ey-berks apply-attributes <path> ---atributes=<attributes directory>           : apply attbiutes for cookbook directory
+  ey-berks help                                          : show this help
+  ey-berks version                                       : show the version
 `
 }
 
 func Command(argv []string) int {
-
-	args, _ := docopt.Parse(usage(), argv, true, "", false)
-	command, path, conf := parseArgs(args)
+	command, args, options := parseArgs(argv)
 
 	configOptions := config.DefaultOption()
-	if conf != "" {
-		configOptions.ConfigFileName = conf
+	if options["config"] != "" {
+		configOptions.ConfigFileName = options["config"]
 	}
 
 	switch command {
@@ -52,62 +52,58 @@ func Command(argv []string) int {
 		fmt.Print(usage())
 		return 0
 	case "clear":
-		fmt.Println("remove cookbooks and %s at %s ? [y, yes|n, no]", configOptions.ConfigFileName, path)
+		fmt.Println("remove cookbooks and %s at %s ? [y, yes|n, no]", configOptions.ConfigFileName, args[0])
 		if askForConfirmation() {
 			fmt.Println("removing cookbooks/ and %s", configOptions.ConfigFileName)
-			cookbookPath := filepath.Join(path, configOptions.ConfigFileName)
-			configPath := filepath.Join(path, configOptions.TargetDirName)
-			if err := os.RemoveAll(cookbookPath); err != nil {
-				fmt.Printf("error: dont' remove because %v\n", err)
-			}
-			if err := os.RemoveAll(configPath); err != nil {
-				fmt.Printf("error: dont' remove because %v\n", err)
-			}
+			removeDirs(
+				filepath.Join(args[0], configOptions.ConfigFileName),
+				filepath.Join(args[0], configOptions.TargetDirName),
+			)
 			fmt.Println("removed")
 		}
 		return 0
 	case "config":
-		fmt.Printf("Creating a sample configuration file, %s at %s\n", configOptions.ConfigFileName, path)
+		fmt.Printf("Creating a sample configuration file, %s at %s\n", configOptions.ConfigFileName, args[0])
 
-		if config.IsExistConfigFile(path, configOptions) {
+		if config.IsExistConfigFile(args[0], configOptions) {
 			fmt.Println("Error: The configration file alrady exists")
 			return 1
 		}
 
-		if err := config.Create(path, configOptions); err != nil {
+		if err := config.Create(args[0], configOptions); err != nil {
 			fmt.Println(err)
 			return 1
 		}
 	case "update-cache":
 		fmt.Println("Updatint cookbook caches")
-		berks := config.Parse(path, configOptions)
-		if err := gather.Gather(path, berks); err != nil {
+		berks := config.Parse(args[0], configOptions)
+		if err := gather.Gather(args[0], berks); err != nil {
 			fmt.Println(err)
 		}
 	case "create-main-recipe":
-		berks := config.Parse(path, configOptions)
+		berks := config.Parse(args[0], configOptions)
 		list := author.CreateMainRecipe(berks)
-		if err := author.CreateFile(path, list); err != nil {
+		if err := author.CreateFile(args[0], list); err != nil {
 			fmt.Printf("error: %v\n", err)
 		}
 	case "copy-recipes":
-		berks := config.Parse(path, configOptions)
-		if err := gather.Copy(path, berks); err != nil {
+		berks := config.Parse(args[0], configOptions)
+		if err := gather.Copy(args[0], berks); err != nil {
 			fmt.Printf("error: %v\n", err)
 		}
 	case "compile":
-		berks := config.Parse(path, configOptions)
+		berks := config.Parse(args[0], configOptions)
 
-		if err := gather.Gather(path, berks); err != nil {
+		if err := gather.Gather(args[0], berks); err != nil {
 			fmt.Println(err)
 		}
 
 		list := author.CreateMainRecipe(berks)
-		if err := author.CreateFile(path, list); err != nil {
+		if err := author.CreateFile(args[0], list); err != nil {
 			fmt.Printf("error: %v\n", err)
 		}
 
-		if err := gather.Copy(path, berks); err != nil {
+		if err := gather.Copy(args[0], berks); err != nil {
 			fmt.Printf("error: %v\n", err)
 		}
 	default:
@@ -135,6 +131,13 @@ func askForConfirmation() bool {
 	}
 }
 
+func removeDirs(pathes ...string) {
+	for _, path := range pathes {
+		if err := os.RemoveAll(path); err != nil {
+			fmt.Printf("error: dont' remove because %v\n", err)
+		}
+	}
+}
 func containsString(slice []string, element string) bool {
 	return !(posString(slice, element) == -1)
 }
@@ -148,14 +151,17 @@ func posString(slice []string, element string) int {
 	return -1
 }
 
-func parseArgs(args map[string]interface{}) (command string, path string, config string) {
-	command = args["<command>"].(string)
-
-	if v := args["<path>"]; v != nil {
-		path = v.(string)
-	}
-	if v := args["--config"]; v != nil {
-		config = v.(string)
+func parseArgs(argv []string) (command string, args []string, options map[string]string) {
+	options = map[string]string{}
+	command = argv[0]
+	reg, _ := regexp.Compile("--([a-z]+)=(.+)")
+	for _, value := range argv[1:] {
+		if match := reg.FindStringSubmatch(value); len(match) == 3 {
+			key := match[1]
+			options[key] = match[2]
+		} else {
+			args = append(args, value)
+		}
 	}
 	return
 }
