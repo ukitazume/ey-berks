@@ -9,6 +9,12 @@ Engine Yard Custom Chef tool like Berfshef.
 
 ScreenCast http://showterm.io/c8df12c47ff6391ca2a2c
 
+### Install
+
+```
+$ go get github.com/ukitazume/ey-berks
+```
+
 ### Basic Usage
 
 ```
